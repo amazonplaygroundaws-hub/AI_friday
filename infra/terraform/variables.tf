@@ -62,9 +62,9 @@ variable "alert_email" {
 }
 
 variable "github_repository" {
-  description = "GitHub owner/repository allowed to assume the deployment role from the main branch."
+  description = "GitHub owner/repository allowed to assume the deployment role from the development environment."
   type        = string
-  default     = "Arv-ind-s/AWS-EXPONENCE-AI-HACKATHON"
+  default     = "amazonplaygroundaws-hub/AI_friday"
 }
 
 variable "allowed_admin_cidrs" {
