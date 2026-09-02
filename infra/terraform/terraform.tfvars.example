@@ -1,0 +1,12 @@
+# alert_email = "you@example.com"
+
+# Example only. Replace with an idempotent release deployment command that uses
+# a private artifact or otherwise authenticated mechanism. Never commit a token.
+app_bootstrap_command = <<-EOT
+  # Fetch the release into /opt/covenant-radar and create .venv.
+  # Example: aws s3 cp s3://YOUR-PRIVATE-RELEASE-BUCKET/release.tar.gz /tmp/release.tar.gz
+  # Example: tar -xzf /tmp/release.tar.gz -C /opt/covenant-radar
+  # Example: python3.12 -m venv /opt/covenant-radar/.venv
+  # Example: /opt/covenant-radar/.venv/bin/pip install -r /opt/covenant-radar/requirements.lock
+  exit 1
+EOT

@@ -1,0 +1,46 @@
+#!/bin/bash
+set -euo pipefail
+
+dnf update -y
+dnf install -y git nginx python3.12 jq
+mkdir -p /opt/covenant-radar
+
+# This command must be idempotent and must not embed repository credentials.
+${app_bootstrap_command}
+
+secret_json=$(aws secretsmanager get-secret-value --region '${aws_region}' --secret-id '${db_secret_arn}' --query SecretString --output text)
+db_user=$(jq -r '.username' <<< "$secret_json")
+db_password=$(jq -r '.password' <<< "$secret_json")
+encoded_password=$(DB_PASSWORD="$db_password" python3.12 -c 'import os, urllib.parse; print(urllib.parse.quote(os.environ["DB_PASSWORD"], safe=""))')
+
+install -d -m 0750 /etc/covenant-radar
+cat >/etc/covenant-radar/environment <<EOF
+COVENANT_RADAR_DATABASE__URL=postgresql+psycopg://$db_user:$encoded_password@${db_endpoint}:5432/covenant_radar
+COVENANT_RADAR_DOCUMENTS__STORE=s3
+COVENANT_RADAR_DOCUMENTS__S3_BUCKET=${documents_bucket}
+COVENANT_RADAR_WEB__HOST=0.0.0.0
+COVENANT_RADAR_WEB__PORT=8000
+COVENANT_RADAR_WEB__WORKERS=1
+EOF
+chmod 0640 /etc/covenant-radar/environment
+
+cat >/etc/systemd/system/covenant-radar.service <<EOF
+[Unit]
+Description=Covenant Radar FastAPI application
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/covenant-radar
+EnvironmentFile=/etc/covenant-radar/environment
+ExecStart=${app_start_command}
+Restart=always
+RestartSec=5
+User=ec2-user
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable --now covenant-radar
