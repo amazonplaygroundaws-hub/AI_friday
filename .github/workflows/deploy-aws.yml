@@ -1,0 +1,87 @@
+name: Deploy to AWS development
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: aws-development-deployment
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  RELEASE_BUCKET: ${{ vars.AWS_RELEASE_BUCKET }}
+  APPLICATION_NAME: covenant-radar
+  ENVIRONMENT: dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configure AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Package and upload release
+        run: |
+          set -euo pipefail
+          test -n "$RELEASE_BUCKET"
+          git archive --format=tar.gz --output="release-${GITHUB_SHA}.tar.gz" "$GITHUB_SHA"
+          aws s3 cp "release-${GITHUB_SHA}.tar.gz" "s3://${RELEASE_BUCKET}/releases/${GITHUB_SHA}.tar.gz"
+          aws s3 cp "release-${GITHUB_SHA}.tar.gz" "s3://${RELEASE_BUCKET}/releases/current.tar.gz"
+
+      - name: Deploy serially through Systems Manager
+        run: |
+          set -euo pipefail
+          instance_ids=$(aws ec2 describe-instances \
+            --filters "Name=tag:Application,Values=${APPLICATION_NAME}" "Name=tag:Environment,Values=${ENVIRONMENT}" "Name=instance-state-name,Values=running" \
+            --query 'Reservations[].Instances[].InstanceId' --output text)
+          test -n "$instance_ids"
+          cat > ssm-commands.json <<EOF
+          {
+            "commands": [
+              "set -euo pipefail",
+              "sudo systemctl stop covenant-radar || true",
+              "sudo rm -rf /opt/covenant-radar.next",
+              "sudo mkdir -p /opt/covenant-radar.next",
+              "sudo aws s3 cp s3://${RELEASE_BUCKET}/releases/${GITHUB_SHA}.tar.gz /tmp/covenant-radar-release.tar.gz --region ${AWS_REGION}",
+              "sudo tar -xzf /tmp/covenant-radar-release.tar.gz -C /opt/covenant-radar.next",
+              "sudo rm -rf /opt/covenant-radar",
+              "sudo mv /opt/covenant-radar.next /opt/covenant-radar",
+              "sudo chown -R ec2-user:ec2-user /opt/covenant-radar",
+              "sudo -u ec2-user python3.12 -m venv /opt/covenant-radar/.venv",
+              "sudo -u ec2-user /opt/covenant-radar/.venv/bin/pip install --upgrade pip",
+              "sudo -u ec2-user /opt/covenant-radar/.venv/bin/pip install -e /opt/covenant-radar",
+              "sudo bash -c 'set -a; source /etc/covenant-radar/environment; set +a; cd /opt/covenant-radar; .venv/bin/python -m radarctl migrate upgrade'",
+              "sudo systemctl start covenant-radar",
+              "curl --fail --retry 12 --retry-delay 5 http://127.0.0.1:8000/health"
+            ]
+          }
+          EOF
+          command_id=$(aws ssm send-command \
+            --document-name AWS-RunShellScript \
+            --targets "Key=tag:Application,Values=${APPLICATION_NAME}" "Key=tag:Environment,Values=${ENVIRONMENT}" \
+            --max-concurrency 1 \
+            --parameters file://ssm-commands.json \
+            --comment "Deploy ${GITHUB_SHA}" \
+            --query 'Command.CommandId' --output text)
+          echo "Deployment command: $command_id"
+          sleep 8
+          until aws ssm list-command-invocations --command-id "$command_id" --details \
+            --query 'CommandInvocations[].Status' --output text | grep -Eq '^(Success|Failed|Cancelled|TimedOut)'; do
+            sleep 10
+          done
+          statuses=$(aws ssm list-command-invocations --command-id "$command_id" --details \
+            --query 'CommandInvocations[].Status' --output text)
+          test "$statuses" = "Success"

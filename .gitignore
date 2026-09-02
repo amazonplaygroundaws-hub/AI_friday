@@ -19,3 +19,8 @@ evidence/
 *.db
 playwright-report/
 var/
+.terraform/
+*.tfstate
+*.tfstate.*
+infra/terraform/terraform.tfvars
+infra/terraform/*.tfvars.json

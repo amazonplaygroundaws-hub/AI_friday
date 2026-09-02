@@ -26,3 +26,4 @@ resource "aws_cloudwatch_metric_alarm" "app_cpu" {
 
   alarm_actions = var.alert_email == "" ? [] : [aws_sns_topic.alerts.arn]
 }
+
