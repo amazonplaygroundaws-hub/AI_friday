@@ -34,6 +34,7 @@ jobs:
           mkdir -p site/docs/architecture
           cp product-presentation.html site/index.html
           cp docs/architecture/production-aws-eks-architecture.png site/docs/architecture/
+          cp -R docs/presentation site/docs/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
