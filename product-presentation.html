@@ -14,6 +14,9 @@
     body { margin:0; color:var(--ink); background:var(--cream); font-family:Manrope,Arial,sans-serif; }
     .slide { min-height:100vh; min-height:100svh; scroll-snap-align:start; position:relative; overflow:hidden; padding:clamp(28px,5vw,72px) clamp(24px,8vw,140px); display:flex; flex-direction:column; }
     .tilt-card { transform-style:preserve-3d; transition:transform .22s ease, box-shadow .22s ease; will-change:transform; }
+    .reveal { opacity:0; transform:translateY(30px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.75,.2,1); }
+    .reveal--left { transform:translateX(-38px); }.reveal--right { transform:translateX(38px); }.reveal--scale { transform:scale(.92); }
+    .is-visible .reveal { opacity:1; transform:none; }.is-visible .reveal:nth-child(2) { transition-delay:.12s; }.is-visible .reveal:nth-child(3) { transition-delay:.24s; }.is-visible .reveal:nth-child(4) { transition-delay:.36s; }
     .eyebrow { color:#1d7dce; text-transform:uppercase; letter-spacing:.16em; font:500 11px 'DM Mono',monospace; margin:0 0 18px; }
     .display { letter-spacing:-.055em; font:700 clamp(42px,6vw,84px)/1.03 'Playfair Display',Georgia,serif; margin:0; }
     .lead { max-width:630px; color:var(--muted); font-size:clamp(16px,1.45vw,21px); line-height:1.7; }
@@ -44,6 +47,7 @@
     .timeline { display:grid; gap:0; margin:18px 0 28px; }
     .timeline-row { display:grid; grid-template-columns:110px 1fr; align-items:center; width:100%; min-height:64px; border:0; border-bottom:1px solid var(--line); background:transparent; text-align:left; cursor:pointer; padding:0; font:inherit; transition:background .2s ease, transform .2s ease; }
     .timeline-row:hover, .timeline-row:focus-visible, .timeline-row.is-active { background:#f2f7ff; outline:0; transform:translateX(8px); }
+    .is-visible .timeline-row { animation:timelineIn .5s both; }.is-visible .timeline-row:nth-child(1) { animation-delay:.18s; }.is-visible .timeline-row:nth-child(2) { animation-delay:.3s; }.is-visible .timeline-row:nth-child(3) { animation-delay:.42s; }.is-visible .timeline-row:nth-child(4) { animation-delay:.54s; } @keyframes timelineIn { from { opacity:0; transform:translateX(24px); } to { opacity:1; transform:translateX(0); } }
     .timeline-row:last-child { border:0; }
     .timeline-row strong { font:500 10px 'DM Mono',monospace; letter-spacing:.06em; color:var(--muted); }
     .status { padding:6px 9px; border-radius:3px; font:600 11px 'DM Mono',monospace; width:max-content; }
@@ -58,6 +62,7 @@
     .flow-card { min-height:225px; padding:25px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); position:relative; cursor:default; }
     .flow-card:hover { z-index:2; box-shadow:0 22px 35px rgba(16,36,63,.16); }
     .flow-card:nth-child(1), .flow-card:nth-child(4) { background:var(--navy); color:white; }.flow-card:nth-child(1) p, .flow-card:nth-child(4) p { color:#c4d0df; }
+    .is-visible .flow-card { animation:cardRise .58s both; }.is-visible .flow-card:nth-child(1) { animation-delay:.1s; }.is-visible .flow-card:nth-child(2) { animation-delay:.2s; }.is-visible .flow-card:nth-child(3) { animation-delay:.3s; }.is-visible .flow-card:nth-child(4) { animation-delay:.4s; } @keyframes cardRise { from { opacity:0; transform:translateY(32px) rotateX(-8deg); } to { opacity:1; transform:translateY(0) rotateX(0); } }
     .flow-n { color:#2276ec; font:500 11px 'DM Mono',monospace; }.flow-card:nth-child(1) .flow-n, .flow-card:nth-child(4) .flow-n { color:var(--aqua); }
     .flow-card h3 { font-size:18px; margin:24px 0 8px; letter-spacing:-.04em; }.flow-card p { color:var(--muted); line-height:1.6; font-size:13px; margin:0; }
     .outcome { margin-top:20px; padding:15px 20px; background:#eaf1fd; display:flex; gap:18px; align-items:center; font-size:14px; }.outcome b { color:var(--blue); white-space:nowrap; }
@@ -68,6 +73,7 @@
     .future .eyebrow { color:var(--aqua); }.future .lead { max-width:100%; color:#c7d2e1; font-size:clamp(15px,1.15vw,19px); }
     .principles { display:flex; gap:11px; flex-wrap:wrap; margin-top:28px; }.principles span { font:500 11px 'DM Mono',monospace; border:1px solid rgba(255,255,255,.24); padding:9px 12px; background:rgba(7,27,50,.35); }
     .architecture-flip { position:absolute; right:clamp(24px,4vw,74px); top:50%; width:min(43vw,680px); transform:translateY(-42%); perspective:1800px; z-index:2; }
+    .architecture-flip.reveal { opacity:0; transform:translateY(-42%) translateX(48px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.75,.2,1); }.is-visible .architecture-flip.reveal { opacity:1; transform:translateY(-42%) translateX(0); }
     .flip-button { appearance:none; width:100%; padding:0; border:0; color:inherit; font:inherit; background:transparent; cursor:pointer; text-align:inherit; }
     .flip-card { position:relative; width:100%; min-height:min(59vh,540px); transform-style:preserve-3d; transition:transform 1s cubic-bezier(.2,.75,.2,1); }
     .architecture-flip.is-flipped .flip-card { transform:rotateY(180deg); }
@@ -85,9 +91,10 @@
     .flip-hint { position:absolute; top:-26px; right:0; display:flex; align-items:center; gap:8px; color:#b7cce1; font:500 10px 'DM Mono',monospace; letter-spacing:.1em; }.flip-hint b { width:22px; height:22px; display:grid; place-items:center; border:1px solid rgba(49,213,197,.7); border-radius:50%; color:var(--aqua); animation:hintPulse 1.8s ease infinite; } @keyframes hintPulse { 50% { transform:scale(1.17); box-shadow:0 0 16px rgba(49,213,197,.35); } }
     .architecture-flip.is-flipped .flip-hint { color:var(--aqua); }.architecture-flip.is-flipped .flip-hint span { font-size:0; }.architecture-flip.is-flipped .flip-hint span:after { content:'CLICK TO RETURN'; font-size:10px; }
 
-    @media (max-width:950px) { .radar-orbit { opacity:.3; right:-10vw; }.future { justify-content:flex-start; padding-top:120px; }.architecture-flip { position:relative; right:auto; top:auto; width:100%; transform:none; margin:42px auto 36px; }.flip-card { min-height:390px; }.future-content { width:100%; max-width:650px; }.future .slide-num, .future .next { bottom:12px; }.tf-diagram { transform:scale(.9); } }
+    @media (max-width:950px) { .radar-orbit { opacity:.3; right:-10vw; }.future { justify-content:flex-start; padding-top:120px; }.architecture-flip { position:relative; right:auto; top:auto; width:100%; transform:none; margin:42px auto 36px; }.architecture-flip.reveal { transform:translateX(32px); }.is-visible .architecture-flip.reveal { transform:translateX(0); }.flip-card { min-height:390px; }.future-content { width:100%; max-width:650px; }.future .slide-num, .future .next { bottom:12px; }.tf-diagram { transform:scale(.9); } }
     @media (max-width:760px) { .topbar { top:21px; }.problem-layout { grid-template-columns:1fr; }.flow { grid-template-columns:1fr 1fr; }.product-heading { display:block; }.product-heading .lead { margin-top:16px; }.flow-card { min-height:180px; padding:19px; } }
     @media (max-width:440px) { .flow { grid-template-columns:1fr; }.display { font-size:40px; }.timeline-row { grid-template-columns:91px 1fr; } }
+    @media (prefers-reduced-motion:reduce) { *, *:before, *:after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; } .reveal { opacity:1; transform:none; } }
   </style>
 </head>
 <body>
@@ -103,32 +110,32 @@
     <span class="slide-num">THE OPPORTUNITY</span><a class="next" href="#problem">The problem <span>↓</span></a>
   </section>
 
-  <section class="slide problem" id="problem">
+  <section class="slide problem animated-slide" id="problem">
     <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">02 / 04</span></header>
     <div class="problem-layout">
-      <div><p class="eyebrow">The problem</p><h2 class="display">Quarterly checks create a blind window.</h2><p class="lead">A borrower may start facing financial trouble between reporting periods. Payments, cash flow, credit use, or industry conditions can show early warning signs, even when the latest covenant report still says “compliant.”</p><p class="problem-note">By the time a formal breach is discovered, intervention options have narrowed. The issue is not a lack of data; it is disconnected, unread evidence.</p></div>
-      <article class="blind-window tilt-card" aria-label="Interactive example of a monitoring blind window"><p class="eyebrow">A typical lending timeline · click a moment</p><div class="timeline"><button class="timeline-row is-active" type="button" data-detail="The last filed statement is valid, but it only represents one point in time — not the borrower’s daily operating position."><strong>DAY 0</strong><span class="status gray">Filed statements: compliant</span></button><button class="timeline-row" type="button" data-detail="Rising utilisation and payment delays are early pressure signals. In a manual review cycle, both can remain disconnected from the covenant."><strong>DAY 27</strong><span class="status red">Utilisation climbs · payments slip</span></button><button class="timeline-row" type="button" data-detail="Cash-outflow changes and sector stress strengthen the evidence. The pattern is sustained rather than a one-off exception."><strong>DAY 54</strong><span class="status red">Treasury and industry stress</span></button><button class="timeline-row" type="button" data-detail="The quarterly test finally confirms the breach. Covenant Radar instead escalates the trajectory, with evidence, well before this date."><strong>DAY 90</strong><span class="status red">Next covenant test — breach found</span></button></div><p class="timeline-detail" aria-live="polite">The last filed statement is valid, but it only represents one point in time — not the borrower’s daily operating position.</p></article>
+      <div class="reveal reveal--left"><p class="eyebrow">The problem</p><h2 class="display">Quarterly checks create a blind window.</h2><p class="lead">A borrower may start facing financial trouble between reporting periods. Payments, cash flow, credit use, or industry conditions can show early warning signs, even when the latest covenant report still says “compliant.”</p><p class="problem-note">By the time a formal breach is discovered, intervention options have narrowed. The issue is not a lack of data; it is disconnected, unread evidence.</p></div>
+      <article class="blind-window tilt-card reveal reveal--right" aria-label="Interactive example of a monitoring blind window"><p class="eyebrow">A typical lending timeline · click a moment</p><div class="timeline"><button class="timeline-row is-active" type="button" data-detail="The last filed statement is valid, but it only represents one point in time — not the borrower’s daily operating position."><strong>DAY 0</strong><span class="status gray">Filed statements: compliant</span></button><button class="timeline-row" type="button" data-detail="Rising utilisation and payment delays are early pressure signals. In a manual review cycle, both can remain disconnected from the covenant."><strong>DAY 27</strong><span class="status red">Utilisation climbs · payments slip</span></button><button class="timeline-row" type="button" data-detail="Cash-outflow changes and sector stress strengthen the evidence. The pattern is sustained rather than a one-off exception."><strong>DAY 54</strong><span class="status red">Treasury and industry stress</span></button><button class="timeline-row" type="button" data-detail="The quarterly test finally confirms the breach. Covenant Radar instead escalates the trajectory, with evidence, well before this date."><strong>DAY 90</strong><span class="status red">Next covenant test — breach found</span></button></div><p class="timeline-detail" aria-live="polite">The last filed statement is valid, but it only represents one point in time — not the borrower’s daily operating position.</p></article>
     </div>
     <span class="slide-num">WHY IT MATTERS</span><a class="next" href="#product">Our product <span>↓</span></a>
   </section>
 
-  <section class="slide product" id="product">
+  <section class="slide product animated-slide" id="product">
     <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">03 / 04</span></header>
-    <div class="product-heading"><div><p class="eyebrow">Our product</p><h2 class="display">From raw signals to a defensible next move.</h2></div><p class="lead">A daily operating system for relationship, credit and risk teams — designed to make every warning understandable and actionable.</p></div>
-    <div class="flow">
+    <div class="product-heading reveal"><div><p class="eyebrow">Our product</p><h2 class="display">From raw signals to a defensible next move.</h2></div><p class="lead">A daily operating system for relationship, credit and risk teams — designed to make every warning understandable and actionable.</p></div>
+    <div class="flow reveal reveal--scale">
       <article class="flow-card tilt-card"><span class="flow-n">01 / INGEST</span><h3>Unify the evidence</h3><p>Financial statements, account activity, payments, utilisation, treasury, concentration, industry and news signals.</p></article>
       <article class="flow-card tilt-card"><span class="flow-n">02 / TEST</span><h3>Protect the contract</h3><p>Calculate covenant ratios deterministically, with the applicable thresholds, exceptions and cure periods.</p></article>
       <article class="flow-card tilt-card"><span class="flow-n">03 / FORECAST</span><h3>Read the trajectory</h3><p>Detect sustained, material deterioration and project breach risk across 30, 60 and 90 days.</p></article>
       <article class="flow-card tilt-card"><span class="flow-n">04 / ACT</span><h3>Focus the desk</h3><p>Rank urgency, name the drivers, simulate interventions and create an audit-ready case record.</p></article>
     </div>
-    <div class="outcome"><b>THE DIFFERENCE</b><span>Deterministic covenant maths stays separate from AI-assisted interpretation — so every warning can be explained, challenged and reconstructed.</span></div>
+    <div class="outcome reveal"><b>THE DIFFERENCE</b><span>Deterministic covenant maths stays separate from AI-assisted interpretation — so every warning can be explained, challenged and reconstructed.</span></div>
     <span class="slide-num">HOW IT WORKS</span><a class="next" href="#future">Future-ready architecture <span>↓</span></a>
   </section>
 
-  <section class="slide future" id="future">
+  <section class="slide future animated-slide" id="future">
     <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">04 / 04</span></header>
-    <div class="future-content"><p class="eyebrow">Architecture evolution</p><h2 class="display">Built to grow<br>with the bank.</h2><p class="lead">Explore the implementation in place today, then flip the diagram to see the AWS EKS target architecture for resilient, portfolio-wide scale.</p><div class="principles"><span>Elastic scale</span><span>Service resilience</span><span>Secure integration</span><span>Observability by design</span></div></div>
-    <div class="architecture-flip" id="architecture-flip">
+    <div class="future-content reveal reveal--left"><p class="eyebrow">Architecture evolution</p><h2 class="display">Built to grow<br>with the bank.</h2><p class="lead">Compare today’s Terraform deployment—ALB, EC2 Auto Scaling, RDS, S3, and CloudWatch—with the target Amazon EKS platform for resilient, secure, portfolio-wide credit monitoring.</p><div class="principles"><span>Elastic scale</span><span>Service resilience</span><span>Secure integration</span><span>Observability by design</span></div></div>
+    <div class="architecture-flip reveal reveal--right" id="architecture-flip">
       <p class="flip-hint" aria-hidden="true"><b>↻</b><span>CLICK THE CARD TO EXPLORE EKS</span></p>
       <button class="flip-button" type="button" aria-controls="architecture-card" aria-pressed="false" aria-label="Flip architecture diagram to view the future AWS EKS architecture">
         <div class="flip-card" id="architecture-card">
@@ -149,6 +156,10 @@
     <span class="slide-num">THE FUTURE</span><a class="next" href="#home">Back to start <span>↑</span></a>
   </section>
   <script>
+    const slideObserver = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (entry.isIntersecting) { entry.target.classList.add('is-visible'); slideObserver.unobserve(entry.target); }
+    }), { threshold: .35 });
+    document.querySelectorAll('.animated-slide').forEach((slide) => slideObserver.observe(slide));
     document.querySelectorAll('.timeline-row').forEach((row) => row.addEventListener('click', () => {
       document.querySelectorAll('.timeline-row').forEach((item) => item.classList.remove('is-active'));
       row.classList.add('is-active');
