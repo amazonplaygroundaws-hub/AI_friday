@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Covenant Radar — AI-powered early warning for commercial credit.">
+  <title>Covenant Radar | Early-warning intelligence</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
+
+    :root { --ink:#10243f; --navy:#08203d; --blue:#1262e5; --aqua:#31d5c5; --cream:#f5f7fb; --muted:#63728a; --line:#dce5f1; --danger:#e85e5e; }
+    * { box-sizing:border-box; }
+    html { scroll-snap-type:y mandatory; scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:var(--cream); font-family:Manrope,Arial,sans-serif; }
+    .slide { min-height:100vh; min-height:100svh; scroll-snap-align:start; position:relative; overflow:hidden; padding:clamp(28px,5vw,72px) clamp(24px,8vw,140px); display:flex; flex-direction:column; }
+    .tilt-card { transform-style:preserve-3d; transition:transform .22s ease, box-shadow .22s ease; will-change:transform; }
+    .eyebrow { color:#1d7dce; text-transform:uppercase; letter-spacing:.16em; font:500 11px 'DM Mono',monospace; margin:0 0 18px; }
+    .display { letter-spacing:-.055em; font:700 clamp(42px,6vw,84px)/1.03 'Playfair Display',Georgia,serif; margin:0; }
+    .lead { max-width:630px; color:var(--muted); font-size:clamp(16px,1.45vw,21px); line-height:1.7; }
+    .topbar { position:absolute; inset:27px clamp(24px,8vw,140px) auto; display:flex; align-items:center; justify-content:space-between; z-index:2; }
+    .brand { color:inherit; text-decoration:none; display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:-.04em; }
+    .brand-mark { width:27px; height:27px; border:2px solid currentColor; border-radius:50%; display:grid; place-items:center; font-size:15px; }
+    .page-count { font:500 11px 'DM Mono',monospace; letter-spacing:.12em; opacity:.75; }
+    .slide-num { position:absolute; bottom:30px; left:clamp(24px,8vw,140px); color:var(--muted); font:500 11px 'DM Mono',monospace; letter-spacing:.14em; }
+    .next { position:absolute; right:clamp(24px,8vw,140px); bottom:25px; color:inherit; text-decoration:none; font:600 12px 'DM Mono',monospace; letter-spacing:.08em; }
+    .next span { font-size:20px; vertical-align:-2px; margin-left:5px; }
+
+    .hero { color:white; background:var(--navy); justify-content:center; }
+    .hero:before { content:""; position:absolute; width:min(62vw,850px); aspect-ratio:1; right:-13vw; top:-16vh; border-radius:50%; background:radial-gradient(circle at 37% 43%,rgba(49,213,197,.9),rgba(18,98,229,.25) 36%,transparent 64%); filter:blur(2px); animation:drift 9s ease-in-out infinite alternate; }
+    .hero:after { content:""; position:absolute; inset:0; opacity:.22; background-image:linear-gradient(rgba(255,255,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.12) 1px,transparent 1px); background-size:58px 58px; mask-image:linear-gradient(to right,black,transparent 75%); }
+    .hero-content { position:relative; z-index:1; max-width:850px; }
+    .hero .eyebrow { color:var(--aqua); }
+    .hero .lead { color:#c2cfde; max-width:680px; }
+    .hero-chip { display:inline-flex; gap:11px; align-items:center; margin-top:18px; color:#e2e9f2; border:1px solid rgba(255,255,255,.25); border-radius:30px; padding:9px 14px; font:500 11px 'DM Mono',monospace; }
+    .pulse { width:7px; height:7px; border-radius:50%; background:var(--aqua); box-shadow:0 0 0 6px rgba(49,213,197,.15); }
+    .radar-orbit { position:absolute; z-index:1; right:clamp(20px,9vw,150px); top:50%; width:min(31vw,430px); aspect-ratio:1; transform:translateY(-50%) rotateX(63deg) rotateZ(-26deg); border:1px solid rgba(110,219,255,.4); border-radius:50%; box-shadow:0 0 0 55px rgba(35,107,190,.06), 0 0 0 110px rgba(35,107,190,.04); animation:spin 16s linear infinite; }
+    .radar-orbit:before, .radar-orbit:after { content:""; position:absolute; width:13px; height:13px; border-radius:50%; background:var(--aqua); box-shadow:0 0 22px 7px rgba(49,213,197,.34); }.radar-orbit:before { top:13%; left:19%; }.radar-orbit:after { right:16%; bottom:17%; background:#80aaff; }
+    @keyframes drift { to { transform:translate3d(-35px,35px,0) scale(1.08); } } @keyframes spin { to { transform:translateY(-50%) rotateX(63deg) rotateZ(334deg); } }
+
+    .problem { background:#f6f7f9; justify-content:center; }
+    .problem-layout { display:grid; grid-template-columns:1fr 1.07fr; gap:clamp(36px,8vw,130px); align-items:center; }
+    .problem .display { font-size:clamp(38px,4.5vw,64px); }
+    .blind-window { background:white; border:1px solid var(--line); box-shadow:0 22px 45px rgba(16,36,63,.08); padding:clamp(24px,3vw,44px); perspective:900px; }
+    .timeline { display:grid; gap:0; margin:18px 0 28px; }
+    .timeline-row { display:grid; grid-template-columns:110px 1fr; align-items:center; width:100%; min-height:64px; border:0; border-bottom:1px solid var(--line); background:transparent; text-align:left; cursor:pointer; padding:0; font:inherit; transition:background .2s ease, transform .2s ease; }
+    .timeline-row:hover, .timeline-row:focus-visible, .timeline-row.is-active { background:#f2f7ff; outline:0; transform:translateX(8px); }
+    .timeline-row:last-child { border:0; }
+    .timeline-row strong { font:500 10px 'DM Mono',monospace; letter-spacing:.06em; color:var(--muted); }
+    .status { padding:6px 9px; border-radius:3px; font:600 11px 'DM Mono',monospace; width:max-content; }
+    .status.gray { color:#6e7b8b; background:#edf1f5; }.status.red { color:#a52e32; background:#fde7e7; }.status.aqua { color:#076d68; background:#d9f7f4; }
+    .problem-note { color:var(--muted); border-left:3px solid var(--blue); padding-left:18px; line-height:1.65; font-size:14px; }
+    .timeline-detail { min-height:45px; margin:0; padding:12px 15px; border-radius:3px; background:#eff5ff; color:#274561; font-size:13px; line-height:1.5; }
+
+    .product { background:white; justify-content:center; }
+    .product-heading { display:flex; justify-content:space-between; align-items:end; gap:25px; margin-bottom:38px; }
+    .product-heading .lead { margin:0; font-size:15px; max-width:440px; }
+    .flow { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); border-left:1px solid var(--line); }
+    .flow-card { min-height:225px; padding:25px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); position:relative; cursor:default; }
+    .flow-card:hover { z-index:2; box-shadow:0 22px 35px rgba(16,36,63,.16); }
+    .flow-card:nth-child(1), .flow-card:nth-child(4) { background:var(--navy); color:white; }.flow-card:nth-child(1) p, .flow-card:nth-child(4) p { color:#c4d0df; }
+    .flow-n { color:#2276ec; font:500 11px 'DM Mono',monospace; }.flow-card:nth-child(1) .flow-n, .flow-card:nth-child(4) .flow-n { color:var(--aqua); }
+    .flow-card h3 { font-size:18px; margin:24px 0 8px; letter-spacing:-.04em; }.flow-card p { color:var(--muted); line-height:1.6; font-size:13px; margin:0; }
+    .outcome { margin-top:20px; padding:15px 20px; background:#eaf1fd; display:flex; gap:18px; align-items:center; font-size:14px; }.outcome b { color:var(--blue); white-space:nowrap; }
+
+    .future { color:white; background:#071b32; justify-content:center; }
+    .future:before { content:""; position:absolute; inset:0; background:linear-gradient(115deg,rgba(7,27,50,.95) 12%,rgba(7,27,50,.76) 53%,rgba(7,27,50,.91)); z-index:0; }
+    .future > * { position:relative; z-index:1; }
+    .future-content { max-width:550px; }
+    .future .eyebrow { color:var(--aqua); }.future .lead { color:#c7d2e1; }
+    .principles { display:flex; gap:11px; flex-wrap:wrap; margin-top:28px; }.principles span { font:500 11px 'DM Mono',monospace; border:1px solid rgba(255,255,255,.24); padding:9px 12px; background:rgba(7,27,50,.35); }
+    .architecture-flip { position:absolute; right:clamp(24px,6vw,100px); top:50%; width:min(45vw,680px); transform:translateY(-42%); perspective:1800px; z-index:2; }
+    .flip-button { appearance:none; width:100%; padding:0; border:0; color:inherit; font:inherit; background:transparent; cursor:pointer; text-align:inherit; }
+    .flip-card { position:relative; width:100%; min-height:min(59vh,540px); transform-style:preserve-3d; transition:transform 1s cubic-bezier(.2,.75,.2,1); }
+    .architecture-flip.is-flipped .flip-card { transform:rotateY(180deg); }
+    .architecture-face { position:absolute; inset:0; padding:21px; border:1px solid rgba(255,255,255,.24); background:rgba(9,30,54,.91); box-shadow:0 30px 70px rgba(0,0,0,.35); backface-visibility:hidden; overflow:hidden; }
+    .architecture-face:after { content:"CLICK TO FLIP"; position:absolute; right:18px; bottom:14px; color:#9cb3ca; font:500 9px 'DM Mono',monospace; letter-spacing:.12em; }
+    .architecture-back { transform:rotateY(180deg); background:#fff; padding:0; }
+    .architecture-back:after { color:#3a5a74; }
+    .diagram-title { margin:0 0 18px; color:var(--aqua); font:500 10px 'DM Mono',monospace; letter-spacing:.13em; }
+    .tf-diagram { display:grid; gap:10px; height:calc(100% - 34px); align-content:center; }
+    .tf-row { display:flex; justify-content:center; gap:10px; align-items:center; }.arrow { color:var(--aqua); font-size:18px; }.node { border:1px solid rgba(159,207,255,.42); min-width:112px; padding:11px 9px; background:rgba(22,72,116,.45); text-align:center; font:600 11px/1.4 Manrope,sans-serif; }.node small { display:block; margin-top:3px; color:#a8c2d9; font:400 9px 'DM Mono',monospace; }.node--aws { border-color:#fcad46; color:#ffcf8d; }.node--data { border-color:#9e8bff; color:#c7bbff; }.node--alert { border-color:#5bd4b5; color:#9bf4de; }
+    .eks-image { width:100%; height:100%; object-fit:contain; object-position:center; display:block; }
+    .architecture-label { position:absolute; left:17px; top:15px; z-index:2; padding:7px 10px; background:rgba(8,32,61,.85); color:#fff; font:500 9px 'DM Mono',monospace; letter-spacing:.11em; }
+    .flip-hint { position:absolute; top:-34px; right:0; display:flex; align-items:center; gap:8px; color:#b7cce1; font:500 10px 'DM Mono',monospace; letter-spacing:.1em; }.flip-hint b { width:22px; height:22px; display:grid; place-items:center; border:1px solid rgba(49,213,197,.7); border-radius:50%; color:var(--aqua); animation:hintPulse 1.8s ease infinite; } @keyframes hintPulse { 50% { transform:scale(1.17); box-shadow:0 0 16px rgba(49,213,197,.35); } }
+    .architecture-flip.is-flipped .flip-hint { color:var(--aqua); }.architecture-flip.is-flipped .flip-hint span { font-size:0; }.architecture-flip.is-flipped .flip-hint span:after { content:'CLICK TO RETURN'; font-size:10px; }
+
+    @media (max-width:950px) { .radar-orbit { opacity:.3; right:-10vw; }.future { justify-content:flex-start; padding-top:120px; }.architecture-flip { position:relative; right:auto; top:auto; width:100%; transform:none; margin:42px auto 36px; }.flip-card { min-height:390px; }.future-content { max-width:650px; }.future .slide-num, .future .next { bottom:12px; } }
+    @media (max-width:760px) { .topbar { top:21px; }.problem-layout { grid-template-columns:1fr; }.flow { grid-template-columns:1fr 1fr; }.product-heading { display:block; }.product-heading .lead { margin-top:16px; }.flow-card { min-height:180px; padding:19px; } }
+    @media (max-width:440px) { .flow { grid-template-columns:1fr; }.display { font-size:40px; }.timeline-row { grid-template-columns:91px 1fr; } }
+  </style>
+</head>
+<body>
+  <section class="slide hero" id="home">
+    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">01 / 04</span></header>
+    <div class="radar-orbit" aria-hidden="true"></div>
+    <main class="hero-content">
+      <p class="eyebrow">Commercial credit · Early-warning intelligence</p>
+      <h1 class="display">See the breach<br>before it happens.</h1>
+      <p class="lead">Covenant Radar gives commercial banks an evidence-backed view of which borrowers are likely to breach, why it is happening, and what the credit desk can do next.</p>
+      <div class="hero-chip"><span class="pulse"></span>30 / 60 / 90-day breach horizon</div>
+    </main>
+    <span class="slide-num">THE OPPORTUNITY</span><a class="next" href="#problem">The problem <span>↓</span></a>
+  </section>
+
+  <section class="slide problem" id="problem">
+    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">02 / 04</span></header>
+    <div class="problem-layout">
+      <div><p class="eyebrow">The problem</p><h2 class="display">Quarterly checks create a blind window.</h2><p class="lead">A borrower can deteriorate between reporting cycles. Payments, cash flows, facility use and industry conditions may all be flashing warning signs — while the covenant file still reads “compliant.”</p><p class="problem-note">By the time a formal breach is discovered, intervention options have narrowed. The issue is not a lack of data; it is disconnected, unread evidence.</p></div>
+      <article class="blind-window tilt-card" aria-label="Interactive example of a monitoring blind window"><p class="eyebrow">A typical lending timeline · click a moment</p><div class="timeline"><button class="timeline-row is-active" type="button" data-detail="The last filed statement is valid, but it only represents one point in time — not the borrower’s daily operating position."><strong>DAY 0</strong><span class="status gray">Filed statements: compliant</span></button><button class="timeline-row" type="button" data-detail="Rising utilisation and payment delays are early pressure signals. In a manual review cycle, both can remain disconnected from the covenant."><strong>DAY 27</strong><span class="status red">Utilisation climbs · payments slip</span></button><button class="timeline-row" type="button" data-detail="Cash-outflow changes and sector stress strengthen the evidence. The pattern is sustained rather than a one-off exception."><strong>DAY 54</strong><span class="status red">Treasury and industry stress</span></button><button class="timeline-row" type="button" data-detail="The quarterly test finally confirms the breach. Covenant Radar instead escalates the trajectory, with evidence, well before this date."><strong>DAY 90</strong><span class="status aqua">Next covenant test — breach found</span></button></div><p class="timeline-detail" aria-live="polite">The last filed statement is valid, but it only represents one point in time — not the borrower’s daily operating position.</p></article>
+    </div>
+    <span class="slide-num">WHY IT MATTERS</span><a class="next" href="#product">Our product <span>↓</span></a>
+  </section>
+
+  <section class="slide product" id="product">
+    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">03 / 04</span></header>
+    <div class="product-heading"><div><p class="eyebrow">Our product</p><h2 class="display">From raw signals to a defensible next move.</h2></div><p class="lead">A daily operating system for relationship, credit and risk teams — designed to make every warning understandable and actionable.</p></div>
+    <div class="flow">
+      <article class="flow-card tilt-card"><span class="flow-n">01 / INGEST</span><h3>Unify the evidence</h3><p>Financial statements, account activity, payments, utilisation, treasury, concentration, industry and news signals.</p></article>
+      <article class="flow-card tilt-card"><span class="flow-n">02 / TEST</span><h3>Protect the contract</h3><p>Calculate covenant ratios deterministically, with the applicable thresholds, exceptions and cure periods.</p></article>
+      <article class="flow-card tilt-card"><span class="flow-n">03 / FORECAST</span><h3>Read the trajectory</h3><p>Detect sustained, material deterioration and project breach risk across 30, 60 and 90 days.</p></article>
+      <article class="flow-card tilt-card"><span class="flow-n">04 / ACT</span><h3>Focus the desk</h3><p>Rank urgency, name the drivers, simulate interventions and create an audit-ready case record.</p></article>
+    </div>
+    <div class="outcome"><b>THE DIFFERENCE</b><span>Deterministic covenant maths stays separate from AI-assisted interpretation — so every warning can be explained, challenged and reconstructed.</span></div>
+    <span class="slide-num">HOW IT WORKS</span><a class="next" href="#future">Future-ready architecture <span>↓</span></a>
+  </section>
+
+  <section class="slide future" id="future">
+    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">04 / 04</span></header>
+    <div class="future-content"><p class="eyebrow">Architecture evolution</p><h2 class="display">Built to grow<br>with the bank.</h2><p class="lead">Explore the implementation in place today, then flip the diagram to see the AWS EKS target architecture for resilient, portfolio-wide scale.</p><div class="principles"><span>Elastic scale</span><span>Service resilience</span><span>Secure integration</span><span>Observability by design</span></div></div>
+    <div class="architecture-flip" id="architecture-flip">
+      <p class="flip-hint" aria-hidden="true"><b>↻</b><span>CLICK THE CARD TO EXPLORE EKS</span></p>
+      <button class="flip-button" type="button" aria-controls="architecture-card" aria-pressed="false" aria-label="Flip architecture diagram to view the future AWS EKS architecture">
+        <div class="flip-card" id="architecture-card">
+          <div class="architecture-face architecture-front">
+            <p class="diagram-title">CURRENT DEPLOYMENT · DERIVED FROM TERRAFORM</p>
+            <div class="tf-diagram" aria-label="Current AWS Terraform architecture"><div class="tf-row"><div class="node node--aws">Internet<small>HTTPS / HTTP</small></div></div><div class="tf-row"><span class="arrow">↓</span></div><div class="tf-row"><div class="node node--aws">Application Load Balancer<small>health check: /health</small></div></div><div class="tf-row"><span class="arrow">↓</span></div><div class="tf-row"><div class="node">EC2 Auto Scaling Group<small>Amazon Linux · CPU target 60%</small></div><div class="node node--alert">CloudWatch + SNS<small>CPU alarm + email</small></div></div><div class="tf-row"><span class="arrow">↓</span></div><div class="tf-row"><div class="node node--data">RDS PostgreSQL 17<small>encrypted · private</small></div><div class="node node--data">S3 Documents<small>encrypted · versioned</small></div></div></div>
+          </div>
+          <div class="architecture-face architecture-back"><span class="architecture-label">FUTURE TARGET · AWS EKS</span><img class="eks-image" src="docs/architecture/production-aws-eks-architecture.png" alt="Future Covenant Radar production AWS EKS architecture"></div>
+        </div>
+      </button>
+    </div>
+    <span class="slide-num">THE FUTURE</span><a class="next" href="#home">Back to start <span>↑</span></a>
+  </section>
+  <script>
+    document.querySelectorAll('.timeline-row').forEach((row) => row.addEventListener('click', () => {
+      document.querySelectorAll('.timeline-row').forEach((item) => item.classList.remove('is-active'));
+      row.classList.add('is-active');
+      row.closest('.blind-window').querySelector('.timeline-detail').textContent = row.dataset.detail;
+    }));
+    const flip = document.querySelector('#architecture-flip');
+    const flipButton = flip.querySelector('.flip-button');
+    flipButton.addEventListener('click', () => {
+      const active = flip.classList.toggle('is-flipped');
+      flipButton.setAttribute('aria-pressed', active);
+      flipButton.setAttribute('aria-label', active ? 'Flip architecture diagram to view the current Terraform architecture' : 'Flip architecture diagram to view the future AWS EKS architecture');
+    });
+    document.querySelectorAll('.tilt-card').forEach((card) => {
+      card.addEventListener('pointermove', (event) => {
+        const bounds = card.getBoundingClientRect(); const x = (event.clientX - bounds.left) / bounds.width - .5; const y = (event.clientY - bounds.top) / bounds.height - .5;
+        card.style.transform = `rotateX(${-y * 5}deg) rotateY(${x * 5}deg) translateZ(5px)`;
+      });
+      card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+    });
+  </script>
+</body>
+</html>
