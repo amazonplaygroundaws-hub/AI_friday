@@ -66,6 +66,7 @@
     .flow-n { color:#2276ec; font:500 11px 'DM Mono',monospace; }.flow-card:nth-child(1) .flow-n, .flow-card:nth-child(4) .flow-n { color:var(--aqua); }
     .flow-card h3 { font-size:18px; margin:24px 0 8px; letter-spacing:-.04em; }.flow-card p { color:var(--muted); line-height:1.6; font-size:13px; margin:0; }
     .outcome { margin-top:20px; padding:15px 20px; background:#eaf1fd; display:flex; gap:18px; align-items:center; font-size:14px; }.outcome b { color:var(--blue); white-space:nowrap; }
+    .workflow { background:#eef4fb; justify-content:center; }.workflow-heading { max-width:720px; margin-bottom:35px; }.workflow-heading .lead { max-width:650px; font-size:16px; }.workflow-map { display:grid; grid-template-columns:repeat(6,1fr); gap:0; align-items:stretch; perspective:900px; }.workflow-step { position:relative; min-height:172px; padding:21px 17px; border:1px solid #cbd9ea; background:#fff; cursor:pointer; transition:transform .3s ease, box-shadow .3s ease, background .3s ease; }.workflow-step:hover, .workflow-step:focus-visible, .workflow-step.is-active { z-index:2; transform:translateY(-10px) rotateX(4deg); box-shadow:0 20px 28px rgba(31,73,126,.15); background:#f8fbff; outline:0; }.workflow-step:not(:last-child):after { content:"→"; position:absolute; right:-15px; top:73px; width:28px; text-align:center; color:var(--blue); font-size:21px; z-index:3; }.workflow-step__num { color:var(--blue); font:500 10px 'DM Mono',monospace; }.workflow-step h3 { margin:21px 0 8px; font-size:15px; letter-spacing:-.03em; }.workflow-step p { margin:0; color:var(--muted); font-size:11px; line-height:1.5; }.workflow-step--ai { border-top:3px solid #e58c32; }.workflow-step--code { border-top:3px solid var(--blue); }.workflow-detail { min-height:51px; margin:25px 0 0; padding:14px 18px; border-left:3px solid var(--aqua); background:#dff3f2; color:#28566b; font-size:13px; line-height:1.5; }
 
     .future { color:white; background:#071b32; justify-content:center; }
     .future:before { content:""; position:absolute; inset:0; background:linear-gradient(115deg,rgba(7,27,50,.95) 12%,rgba(7,27,50,.76) 53%,rgba(7,27,50,.91)); z-index:0; }
@@ -92,14 +93,15 @@
     .architecture-flip.is-flipped .flip-hint { color:var(--aqua); }.architecture-flip.is-flipped .flip-hint span { font-size:0; }.architecture-flip.is-flipped .flip-hint span:after { content:'CLICK TO RETURN'; font-size:10px; }
 
     @media (max-width:950px) { .radar-orbit { opacity:.3; right:-10vw; }.future { justify-content:flex-start; padding-top:120px; }.architecture-flip { position:relative; right:auto; top:auto; width:100%; transform:none; margin:42px auto 36px; }.architecture-flip.reveal { transform:translateX(32px); }.is-visible .architecture-flip.reveal { transform:translateX(0); }.flip-card { min-height:390px; }.future-content { width:100%; max-width:650px; }.future .slide-num, .future .next { bottom:12px; }.tf-diagram { transform:scale(.9); } }
-    @media (max-width:760px) { .topbar { top:21px; }.problem-layout { grid-template-columns:1fr; }.flow { grid-template-columns:1fr 1fr; }.product-heading { display:block; }.product-heading .lead { margin-top:16px; }.flow-card { min-height:180px; padding:19px; } }
+    @media (max-width:950px) { .workflow-map { grid-template-columns:repeat(3,1fr); gap:12px; }.workflow-step:not(:last-child):after { display:none; } }
+    @media (max-width:760px) { .topbar { top:21px; }.problem-layout { grid-template-columns:1fr; }.flow { grid-template-columns:1fr 1fr; }.product-heading { display:block; }.product-heading .lead { margin-top:16px; }.flow-card { min-height:180px; padding:19px; }.workflow-map { grid-template-columns:1fr 1fr; } }
     @media (max-width:440px) { .flow { grid-template-columns:1fr; }.display { font-size:40px; }.timeline-row { grid-template-columns:91px 1fr; } }
     @media (prefers-reduced-motion:reduce) { *, *:before, *:after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; } .reveal { opacity:1; transform:none; } }
   </style>
 </head>
 <body>
   <section class="slide hero" id="home">
-    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">01 / 04</span></header>
+    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">01 / 05</span></header>
     <div class="radar-orbit" aria-hidden="true"></div>
     <main class="hero-content">
       <p class="eyebrow">Commercial credit · Early-warning intelligence</p>
@@ -111,7 +113,7 @@
   </section>
 
   <section class="slide problem animated-slide" id="problem">
-    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">02 / 04</span></header>
+    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">02 / 05</span></header>
     <div class="problem-layout">
       <div class="reveal reveal--left"><p class="eyebrow">The problem</p><h2 class="display">Quarterly checks create a blind window.</h2><p class="lead">A borrower may start facing financial trouble between reporting periods. Payments, cash flow, credit use, or industry conditions can show early warning signs, even when the latest covenant report still says “compliant.”</p><p class="problem-note">By the time a formal breach is discovered, intervention options have narrowed. The issue is not a lack of data; it is disconnected, unread evidence.</p></div>
       <article class="blind-window tilt-card reveal reveal--right" aria-label="Interactive example of a monitoring blind window"><p class="eyebrow">A typical lending timeline · click a moment</p><div class="timeline"><button class="timeline-row is-active" type="button" data-detail="The last filed statement is valid, but it only represents one point in time — not the borrower’s daily operating position."><strong>DAY 0</strong><span class="status gray">Filed statements: compliant</span></button><button class="timeline-row" type="button" data-detail="Rising utilisation and payment delays are early pressure signals. In a manual review cycle, both can remain disconnected from the covenant."><strong>DAY 27</strong><span class="status red">Utilisation climbs · payments slip</span></button><button class="timeline-row" type="button" data-detail="Cash-outflow changes and sector stress strengthen the evidence. The pattern is sustained rather than a one-off exception."><strong>DAY 54</strong><span class="status red">Treasury and industry stress</span></button><button class="timeline-row" type="button" data-detail="The quarterly test finally confirms the breach. Covenant Radar instead escalates the trajectory, with evidence, well before this date."><strong>DAY 90</strong><span class="status red">Next covenant test — breach found</span></button></div><p class="timeline-detail" aria-live="polite">The last filed statement is valid, but it only represents one point in time — not the borrower’s daily operating position.</p></article>
@@ -120,7 +122,7 @@
   </section>
 
   <section class="slide product animated-slide" id="product">
-    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">03 / 04</span></header>
+    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">03 / 05</span></header>
     <div class="product-heading reveal"><div><p class="eyebrow">Our product</p><h2 class="display">From raw signals to a defensible next move.</h2></div><p class="lead">A daily operating system for relationship, credit and risk teams — designed to make every warning understandable and actionable.</p></div>
     <div class="flow reveal reveal--scale">
       <article class="flow-card tilt-card"><span class="flow-n">01 / INGEST</span><h3>Unify the evidence</h3><p>Financial statements, account activity, payments, utilisation, treasury, concentration, industry and news signals.</p></article>
@@ -129,11 +131,26 @@
       <article class="flow-card tilt-card"><span class="flow-n">04 / ACT</span><h3>Focus the desk</h3><p>Rank urgency, name the drivers, simulate interventions and create an audit-ready case record.</p></article>
     </div>
     <div class="outcome reveal"><b>THE DIFFERENCE</b><span>Deterministic covenant maths stays separate from AI-assisted interpretation — so every warning can be explained, challenged and reconstructed.</span></div>
-    <span class="slide-num">HOW IT WORKS</span><a class="next" href="#future">Future-ready architecture <span>↓</span></a>
+    <span class="slide-num">HOW IT WORKS</span><a class="next" href="#workflow">Application workflow <span>↓</span></a>
+  </section>
+
+  <section class="slide workflow animated-slide" id="workflow">
+    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">04 / 05</span></header>
+    <div class="workflow-heading reveal reveal--left"><p class="eyebrow">Application workflow</p><h2 class="display">Every warning follows<br>a traceable path.</h2><p class="lead">Six ordered stages turn scattered borrower signals into a ranked, explainable intervention for the credit desk.</p></div>
+    <div class="workflow-map reveal reveal--scale">
+      <button class="workflow-step workflow-step--ai is-active" type="button" data-workflow="Documents and feeds arrive as statements, account conduct, payments, utilisation, treasury, concentration, industry and news signals. AI proposes structure; it does not decide."><span class="workflow-step__num">01 / INTAKE</span><h3>Collect evidence</h3><p>Statements + live signals</p></button>
+      <button class="workflow-step workflow-step--code" type="button" data-workflow="The covenant engine recomputes contractual ratios from normalized figures and compares them with the threshold in force, including exceptions and cure periods."><span class="workflow-step__num">02 / TEST</span><h3>Test the contract</h3><p>Deterministic ratio maths</p></button>
+      <button class="workflow-step workflow-step--code" type="button" data-workflow="Evidence items are versioned and de-duplicated. Persistence, materiality and confidence filters separate sustained deterioration from temporary noise."><span class="workflow-step__num">03 / LEDGER</span><h3>Score persistence</h3><p>Signal evidence ledger</p></button>
+      <button class="workflow-step workflow-step--code" type="button" data-workflow="Headroom is projected to a dated crossing across 30, 60 and 90 days. The forecast names the primary drivers behind each horizon."><span class="workflow-step__num">04 / FORECAST</span><h3>Project the crossing</h3><p>30 / 60 / 90-day risk</p></button>
+      <button class="workflow-step workflow-step--code" type="button" data-workflow="Candidate interventions can be simulated, then borrowers and facilities are ranked by urgency and expected impact for the right desk."><span class="workflow-step__num">05 / TRIAGE</span><h3>Prioritize action</h3><p>Ranked watchlist</p></button>
+      <button class="workflow-step workflow-step--ai" type="button" data-workflow="A grounded memo turns stored facts into a human-reviewable case. Alerts, regulatory packs and the complete audit trail preserve what happened next."><span class="workflow-step__num">06 / ACT</span><h3>Explain &amp; act</h3><p>Memo + audit trail</p></button>
+    </div>
+    <p class="workflow-detail reveal" aria-live="polite">Documents and feeds arrive as statements, account conduct, payments, utilisation, treasury, concentration, industry and news signals. AI proposes structure; it does not decide.</p>
+    <span class="slide-num">THE OPERATING LOOP</span><a class="next" href="#future">Future-ready architecture <span>↓</span></a>
   </section>
 
   <section class="slide future animated-slide" id="future">
-    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">04 / 04</span></header>
+    <header class="topbar"><a class="brand" href="#home"><span class="brand-mark">⌁</span>Covenant Radar</a><span class="page-count">05 / 05</span></header>
     <div class="future-content reveal reveal--left"><p class="eyebrow">Architecture evolution</p><h2 class="display">Built to grow<br>with the bank.</h2><p class="lead">Compare today’s Terraform deployment—ALB, EC2 Auto Scaling, RDS, S3, and CloudWatch—with the target Amazon EKS platform for resilient, secure, portfolio-wide credit monitoring.</p><div class="principles"><span>Elastic scale</span><span>Service resilience</span><span>Secure integration</span><span>Observability by design</span></div></div>
     <div class="architecture-flip reveal reveal--right" id="architecture-flip">
       <p class="flip-hint" aria-hidden="true"><b>↻</b><span>CLICK THE CARD TO EXPLORE EKS</span></p>
@@ -164,6 +181,11 @@
       document.querySelectorAll('.timeline-row').forEach((item) => item.classList.remove('is-active'));
       row.classList.add('is-active');
       row.closest('.blind-window').querySelector('.timeline-detail').textContent = row.dataset.detail;
+    }));
+    document.querySelectorAll('.workflow-step').forEach((step) => step.addEventListener('click', () => {
+      document.querySelectorAll('.workflow-step').forEach((item) => item.classList.remove('is-active'));
+      step.classList.add('is-active');
+      step.closest('.workflow').querySelector('.workflow-detail').textContent = step.dataset.workflow;
     }));
     const flip = document.querySelector('#architecture-flip');
     const flipButton = flip.querySelector('.flip-button');
